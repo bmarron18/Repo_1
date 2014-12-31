@@ -1,0 +1,92 @@
+Title: DynSystems_Project2_3 --- SYSC 505 Wakeland
+Date: 12/19/14
+Author: Marron
+
+
+
+GOAL: Understanding and realization of 'Quality in a Hierarchy' (p. 199 Luenberger)
+
+	LOG1: the recycling matrix, R
+R <- matrix(c(.6,.1,0,.7), ncol=2, byrow=T)
+R
+     [,1] [,2]			
+[1,]  0.6  0.1			
+[2,]  0.0  0.7
+
+x_1 <- c(15,18)		#incoming YearOne (Y1) numbers for two competency classes (sequenced 1st class, 2nd class)
+
+x_2r<- round(R%*%x_1)	#generate YearTwo (Y2) recycled numbers
+x_2r
+     [,1]
+[1,]   11		#60% of the Y1, 1st competency class kept + 10% of the Y1, 2nd competency class upgraded 	==> 11 in 1st class at (k+1) 
+[2,]   13		#0% of the Y1, 1st competency class downgraded + 70% of the Y1, 2nd competency class kept 	==> 13 in 2nd class at (k+1)
+			#about 30% attrition										==> 9 lost (total)
+
+
+
+	LOG2: the promotion matrix, P
+P <- matrix(c(.2,0,.1,.1), ncol=2, byrow=T)
+P
+     [,1] [,2]
+[1,]  0.2  0.0
+[2,]  0.1  0.1
+
+x_2p <- round(P%*%x_2r)		#generate YearTwo (Y2) promotion numbers from Y2 recycled numbers
+x_2p
+     [,1]
+[1,]    2		#20% of the Y2 recycled numbers from the 1st competency class + 0% of the Y2 recycled numbers from the 2nd competency class 
+[2,]    2		#10% of the Y2 recycled numbers from the 1st competency class downgraded + 10% of the Y2 recycled numbers from 
+			 the 2nd competency class
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+	LOG3: behavior of Level 1 over time given only a single, initial input
+
+Trial1:
+Level1<-matrix(rep(0,2), ncol=1)			#intial state vector as matrix (so can use cbind() in recursions)
+Level1[,1]<-c(15,18)					#initial state ==> incoming Y1 numbers for two competency classes
+							#recursive soln; stops when successive vectors are equal
+for (ii in 2:10){								
+	Level1<-cbind(Level1, round(R%*%Level1[,ii-1]))	
+	if(identical(Level1[,ii], Level1[,ii-1])) {		
+		break
+	}
+
+}
+
+Level1
+     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9]
+[1,]   15   11    8    6    4    3    2    1    1
+[2,]   18   13    9    6    4    3    2    1    1
+
+
+
+Trial2:
+Level1<-matrix(rep(0,2), ncol=1)			#intial state vector as matrix (so can use cbind() in recursions)
+Level1[,1]<-c(50,18)					#initial state ==> incoming Y1 numbers for two competency classes
+							#recursive soln; stops when successive vectors are equal
+for (ii in 2:50){								
+	Level1<-cbind(Level1, round(R%*%Level1[,ii-1]))	
+	if(identical(Level1[,ii], Level1[,ii-1])) {		
+		break
+	}
+
+}
+
+Level1
+     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+[1,]   50   32   20   13    8    5    3    2    1     1
+[2,]   18   13    9    6    4    3    2    1    1     1
+
+
+
+
+
+
+
+
+
+
+
+

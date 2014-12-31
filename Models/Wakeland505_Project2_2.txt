@@ -1,0 +1,270 @@
+Title: DynSystems_Project2_2 --- SYSC 505 Wakeland
+Date: 12/15/14
+Author: Marron
+
+
+
+GOAL: Catalog of useful miscellany
+
+---- 1. eigenvalues ----------------------------------------------------------
+The eigenvalue with the larger absolute value will dominate the long-term behavior of the
+system. For arbitrarily large n, the terms with the smaller eigenvalues will be negligible compared to
+those with the larger. Some cases arise:
+
+λ>1			#System grows exponentially
+λ=1			#System reaches an equilibrium
+0<λ<1			#System decays
+-1 < λ < 0		#System decays in an oscillatory manner
+λ = -1			#System reaches a stationary oscillation
+λ < -1			#System grows exponentially in an oscillatory manner
+
+
+
+----- 2. System dynamics in R --------------------------------------------------
+
+	LOG1: no STELLA needed!!
+
+halfLife = 3.2 # hr
+plasmaVolume = 3000 # ml
+eliminationConstant = -log(0.5)/halfLife # 1/hr
+aspirinInPlasma = vector()
+aspirinInPlasma[1] = 2 * 325 * 1000 # ug
+simulationHours = 8 # hr
+deltaX = 5/60 # hr
+x = seq(0,simulationHours,deltaX)
+
+for (i in 2:length(x)) {
+	elimination <- (eliminationConstant * aspirinInPlasma[i-1]) * deltaX
+	aspirinInPlasma[i] <- aspirinInPlasma[i-1] - elimination
+}
+plasmaConcentration = aspirinInPlasma / plasmaVolume # ug/ml
+plot(plasmaConcentration)
+
+
+
+----- 3. A nonlinear systems dynamics model --------------------
+
+	LOG2: strip it down
+
+aspirinInPlasma = vector()
+aspirinInPlasma[1] = 2 * 325 * 1000 	# ug
+
+for (i in 2:10) {
+	elimination <- aspirinInPlasma[i-1]
+	aspirinInPlasma[i] <- aspirinInPlasma[i-1] - elimination
+}
+plasmaConcentration = aspirinInPlasma
+plot(plasmaConcentration)
+
+aspirinInPlasma
+ [1] 650000      0      0      0      0      0      0      0      0      0
+
+
+	LOG3: Not a two-state system!!
+	LOG4: A nonlinear, single state variable system. Look:
+
+halfLife = 3.2 					# hr
+eliminationConstant = -log(0.5)/halfLife 	# 1/hr
+aspirinInPlasma = vector()
+aspirinInPlasma[1] = 2 * 325 * 1000 		# ug
+simulationHours = 8 				# hr
+deltaX = 5/60 					# hr
+
+for (i in 2:200 {
+
+	aspirinInPlasma[i] <- aspirinInPlasma[i-1] - (eliminationConstant * aspirinInPlasma[i-1]) * deltaX
+}
+
+ plot(aspirinInPlasma)
+
+
+
+	LOG5: this doesn't work!!!!
+
+x_1(k+1) = x_2(k)
+x_2(k+1) = x_2(k) - x_1(k)
+
+P <- matrix(rep(0,4), ncol=2)
+P[1,2]<-1
+P[2,1]<-(-1)
+P[2,2]<-1
+P
+     [,1] [,2]
+[1,]    0    1
+[2,]   -1    1
+
+stps<-matrix(rep(0,2), ncol=1)
+stps[2,1] = 2 * 325 * 1000
+stps
+       [,1]
+[1,]      0
+[2,] 650000
+
+ for (i in 2:10) {
+     
+     stps<-cbind(stps, P%*%stps[,i-1])
+     
+ }
+stps
+       [,1]   [,2]   [,3]    [,4]    [,5]    [,6]   [,7]   [,8]   [,9]   [,10]
+[1,]      0 650000 650000       0 -650000 -650000      0 650000 650000       0
+[2,] 650000 650000      0 -650000 -650000       0 650000 650000      0 -650000
+
+
+	LOG5: how about reverse the variable sequencing?
+	LOG6: No, b/c a single, nonlinear single parameter system
+	LOG7: but the cycling is interesting
+
+x_1(k+1) = x_1(k) - x_2(k)
+x_2(k+1) = x_1(k)
+
+P <- matrix(rep(0,4), ncol=2)
+P[1,1]<-1
+P[1,2]<-(-1)
+P[2,1]<-1
+ P
+     [,1] [,2]
+[1,]    1   -1
+[2,]    1    0
+
+stps<-matrix(rep(0,2), ncol=1)
+stps[2,1] = 2 * 325 * 1000
+
+for (i in 2:10) {
+     
+     stps<-cbind(stps, P%*%stps[,i-1])
+     
+ }
+stps
+      [,1]    [,2]    [,3]    [,4]   [,5]   [,6]   [,7]    [,8]    [,9]
+[1,]      0 -650000 -650000       0 650000 650000      0 -650000 -650000
+[2,] 650000       0 -650000 -650000      0 650000 650000       0 -650000
+       [,10]
+[1,]       0
+[2,] -650000
+
+
+
+	LOG8: the difference equation model is thus:
+
+x_1(k+1) 	= x_1(k) - (α)*(x_1(k))		# 0 < α < 1
+		= x_1(k)*(1 - α)
+
+
+	LOG9: look at this system in R
+	LOG10: "Add to a graph" functions ==> points(), lines(), text() etc. 
+
+trial 1:
+stps1 <- vector()
+stps1[1] <- 6500
+alpha <- .5
+for (i in 2:100) {
+	
+	stps1[i] <- stps1[i-1]*(1 - alpha)
+}
+plot(stps1)
+
+
+trial 2:
+stps2 <- vector()
+stps2[1] <- 6500
+alpha <- .25
+for (i in 2:100) {
+	
+	stps2[i] <- stps2[i-1]*(1 - alpha)
+}
+points(stps2, col="red")
+
+
+
+trial 3:
+stps3 <- vector()
+stps3[1] <- 6500
+alpha <- .1250
+for (i in 2:100) {
+	
+	stps3[i] <- stps3[i-1]*(1 - alpha)
+}
+points(stps3, col="green")
+
+
+
+
+trial 4:
+stps4 <- vector()
+stps4[1] <- 6500
+alpha <- .0625
+for (i in 2:100) {
+	
+	stps4[i] <- stps4[i-1]*(1 - alpha)
+}
+points(stps4, col="yellow")
+
+
+
+
+trial 5:
+stps5 <- vector()
+stps5[1] <- 6500
+alpha <- .025
+for (i in 2:100) {
+	
+	stps5[i] <- stps5[i-1]*(1 - alpha)
+}
+points(stps5, col="blue")
+
+
+
+
+trial 6:
+stps6 <- vector()
+stps6[1] <- 6500
+alpha <- .01
+for (i in 2:100) {
+	
+	stps6[i] <- stps6[i-1]*(1 - alpha)
+}
+points(stps6, col="orange")
+
+
+
+
+	LOG11: the logistic?
+	LOG12: Yes!!
+
+trial1:
+stps1 <- vector()
+stps1[1] <- .1
+alpha <- 2
+for (i in 2:100) {
+	
+	stps1[i] <- alpha*stps1[i-1]*(1 - stps1[i-1])
+}
+
+
+
+trial2:
+stps2 <- vector()
+stps2[1] <- .1
+alpha <- 3.2
+for (i in 2:100) {
+	
+	stps2[i] <- alpha*stps2[i-1]*(1 - stps2[i-1])
+}
+
+
+
+
+trial3:
+stps3 <- vector()
+stps3[1] <- .1
+alpha <- 4
+for (i in 2:100) {
+	
+	stps3[i] <- alpha*stps3[i-1]*(1 - stps3[i-1])
+}
+
+
+
+
+

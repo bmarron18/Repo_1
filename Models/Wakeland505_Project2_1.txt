@@ -1,0 +1,334 @@
+Title: DynSystems_Project2_1 --- SYSC 505 Wakeland
+Date: 12/13/14
+Author: Marron
+
+
+
+GOAL: Duplicate results from Example 2 (Simplified Monopoly) p. 232 Luenberger
+	LOG1: seven state Markov chain w/ transition matrix p233
+	LOG2: build transition matrix, P
+
+
+P <- matrix(rep(0, 49), ncol=7)
+     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+[1,]    0    0    0    0    0    0    0
+[2,]    0    0    0    0    0    0    0
+[3,]    0    0    0    0    0    0    0
+[4,]    0    0    0    0    0    0    0
+[5,]    0    0    0    0    0    0    0
+[6,]    0    0    0    0    0    0    0
+[7,]    0    0    0    0    0    0    0
+
+P[1,2]<-.5
+P[1,3]<-.5
+P[2,3]<-.5
+P[2,4]<-.5
+P[3,4]<-.5
+P[3,5]<-.5
+P[4,5]<-.5
+P[4,6]<-.5
+P[5,6]<-.5
+P[5,7]<-.5
+P[6,4]<-.5
+P[6,7]<-.5
+P[7,1]<-.5
+P[7,4]<-.5
+
+P							#the transition matrix
+     [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+[1,]  0.0  0.5  0.5  0.0  0.0  0.0  0.0
+[2,]  0.0  0.0  0.5  0.5  0.0  0.0  0.0
+[3,]  0.0  0.0  0.0  0.5  0.5  0.0  0.0
+[4,]  0.0  0.0  0.0  0.0  0.5  0.5  0.0
+[5,]  0.0  0.0  0.0  0.0  0.0  0.5  0.5
+[6,]  0.0  0.0  0.0  0.5  0.0  0.0  0.5
+[7,]  0.5  0.0  0.0  0.5  0.0  0.0  0.0
+
+	LOG3: examine the multi-step process (p 228)
+
+stp0<-rep(0,7)
+stp0[1]<-1
+stp0
+[1] 1 0 0 0 0 0 0				#player starts in S1
+
+stp1<-t(stp0)%*%P
+     [,1] [,2] [,3] [,4] [,5] [,6] [,7]		#after 1 tic, probs of being in S1 - S7
+[1,]    0  0.5  0.5    0    0    0    0
+
+stp2<-stp1%*%P
+stp2
+     [,1] [,2] [,3] [,4] [,5] [,6] [,7]		#after 2 tic, probs of being in S1 - S7
+[1,]    0    0 0.25  0.5 0.25    0    0
+
+
+stp3<-stp2%*%P
+stp3
+     [,1] [,2] [,3]  [,4]  [,5]  [,6]  [,7]
+[1,]    0    0    0 0.125 0.375 0.375 0.125	#after 3 tic, probs of being in S1 - S7
+
+
+
+	LOG4: excellent! now automate
+	LOG5: generate simdata with loop and save 
+
+stps<-matrix(rep(0,7), ncol=1)			#empty matrix
+stps[1,1]<-1					#initial value ==> S1
+
+for (i in 2:100){
+	
+	stps<-cbind(stps,t(stps[,i-1]%*%P))
+	
+}
+
+	LOG6: OK. The chain has converged at 100 steps. try to set up a self-limiting recurssion
+
+
+stps<-matrix(rep(0,7), ncol=1)			#empty matrix
+stps[1,1]<-1					#initial value ==> S1 at stp1
+stps<-cbind(stps,t(stps[,1]%*%P))
+
+for (i in 2:100){					#This loop says,"????"
+
+	if (identical(stps[,i], stps[,i-1])) {
+	
+		break
+
+	} else {
+
+		stps<-cbind(stps,t(stps[,i]%*%P))
+
+		}
+	
+}
+
+
+	LOG7: The above works but doesn't do it!!
+	LOG8: The above also works w/ ==> stps<-cbind(stps,t(stps[,i-1]%*%P))  but doesn't do it either
+	LOG9: look at this from the internet
+
+you could set a dummy variable to FALSE outside the outermost loop. If the
+break condition is met in the inner loop, set the dummy variable to TRUE
+before breaking and test its truth status in the outer loop. 
+
+dummy <- FALSE
+for ( ii in 1:5 ) {
+   for ( jj in 3:6 ) {
+     cat("ii=",ii,"; jj=",jj,"\n",sep="")
+     if ( ii == jj ) {
+       dummy <- TRUE
+       break
+     }
+   }
+   if ( dummy ) break
+} 
+
+ii=1; jj=3
+ii=1; jj=4
+ii=1; jj=5
+ii=1; jj=6
+ii=2; jj=3
+ii=2; jj=4
+ii=2; jj=5
+ii=2; jj=6
+ii=3; jj=3
+
+	LOG10: apply it?
+
+stps<-matrix(rep(0,7), ncol=1)			#empty matrix
+stps[1,1]<-1					#initial value ==> S1 at stp1
+for (ii in 2:100){
+	stps<-cbind(stps,t(stps[,ii-1]%*%P))	
+	if (identical(stps[,ii], stps[,ii-1])) {		#Ahaha!!! identical() is always FALSE here; must bound it
+		break
+	}
+
+}
+
+
+	LOG11: use round(x, digits=8)
+
+stps<-matrix(rep(0,7), ncol=1)				#empty matrix
+stps[1,1]<-1						#initial value ==> S1 at stp1
+							#recursive soln; stops when successive prob vectors are equal (to 6 decimal places)
+for (ii in 2:100){								
+	stps<-cbind(stps,t(stps[,ii-1]%*%P))	
+	if(identical(round(stps[,ii], digits=6), round(stps[,ii-1], digits=6))) {		
+		break
+	}
+
+}
+
+
+          [,44]      [,45]      [,46]			#stops at [,46]
+[1,] 0.09090911 0.09090904 0.09090914
+[2,] 0.04545458 0.04545455 0.04545452
+[3,] 0.06818181 0.06818185 0.06818180
+[4,] 0.24999988 0.25000000 0.25000006
+[5,] 0.15909101 0.15909084 0.15909092
+[6,] 0.20454554 0.20454545 0.20454542
+[7,] 0.18181807 0.18181827 0.18181815
+
+
+stps<-matrix(rep(0,7), ncol=1)				#empty matrix
+stps[1,1]<-1						#initial value ==> S1 at stp1
+							#recursive soln; stops when successive prob vectors are equal (to 4 decimal places)
+for (ii in 2:100){								
+	stps<-cbind(stps,t(stps[,ii-1]%*%P))	
+	if(identical(round(stps[,ii], digits=4), round(stps[,ii-1], digits=4))) {		
+		break
+	}
+
+} 
+
+          [,28]      [,29]      [,30]      [,31]      [,32]      [,33]		#stops at [.33]
+[1,] 0.09091301 0.09089490 0.09092108 0.09090452 0.09090787 0.09091255
+[2,] 0.04546371 0.04545650 0.04544745 0.04546054 0.04545226 0.04545393
+[3,] 0.06817967 0.06818836 0.06817570 0.06818427 0.06818253 0.06818006
+[4,] 0.24996948 0.25000000 0.25001526 0.24998474 0.25000763 0.25000000
+[5,] 0.15911751 0.15907458 0.15909418 0.15909548 0.15908450 0.15909508
+[6,] 0.20456681 0.20454350 0.20453729 0.20455472 0.20454011 0.20454607
+[7,] 0.18178981 0.18184216 0.18180904 0.18181573 0.18182510 0.18181231
+
+
+
+
+
+	LOG12: Success!! Look at p.234 Luenberger
+
+p^T =[.0909, .0455, .0682, .2500, .1591, .2045, .1818]
+
+
+
+	LOG13: Does raising the matrix, P to the 46 power give the same result?
+
+P^46 									#Oops! This is NOT a matrix exponential calc!!! 
+             [,1]         [,2]         [,3]         [,4]
+[1,] 0.000000e+00 1.421085e-14 1.421085e-14 0.000000e+00
+[2,] 0.000000e+00 0.000000e+00 1.421085e-14 1.421085e-14
+[3,] 0.000000e+00 0.000000e+00 0.000000e+00 1.421085e-14
+[4,] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[5,] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[6,] 0.000000e+00 0.000000e+00 0.000000e+00 1.421085e-14
+[7,] 1.421085e-14 0.000000e+00 0.000000e+00 1.421085e-14
+             [,5]         [,6]         [,7]
+[1,] 0.000000e+00 0.000000e+00 0.000000e+00
+[2,] 0.000000e+00 0.000000e+00 0.000000e+00
+[3,] 1.421085e-14 0.000000e+00 0.000000e+00
+[4,] 1.421085e-14 1.421085e-14 0.000000e+00
+[5,] 0.000000e+00 1.421085e-14 1.421085e-14
+[6,] 0.000000e+00 0.000000e+00 1.421085e-14
+[7,] 0.000000e+00 0.000000e+00 0.000000e+00
+
+
+	LOG14: P^46 is NOT P raised to the 46 power!!! Look:
+
+P2 <- matrix(rep(0, 9), ncol=3)
+P2[1,1]<-.5
+P2[1,2]<-.5
+P2[2,1]<-.5
+P2[2,2]<-.25
+P2[2,3]<-.25
+P2[3,2]<-.5
+P2[3,3]<-.5
+
+P2
+     [,1] [,2] [,3]
+[1,]  0.5 0.50 0.00
+[2,]  0.5 0.25 0.25
+[3,]  0.0 0.50 0.50
+
+P2^2					#squares each p2_ij
+     [,1]   [,2]   [,3]
+[1,] 0.25 0.2500 0.0000
+[2,] 0.25 0.0625 0.0625
+[3,] 0.00 0.2500 0.2500
+
+P2%*%P2					#THIS is it! see p. 232 Luenberger
+      [,1]   [,2]   [,3]
+[1,] 0.500 0.3750 0.1250
+[2,] 0.375 0.4375 0.1875
+[3,] 0.250 0.3750 0.3750
+
+
+	LOG15: Need a new pkg, "expm" to do this beyond squares
+
+library ("expm")		#x %^% k
+P2 %^% 2
+      [,1]   [,2]   [,3]
+[1,] 0.500 0.3750 0.1250
+[2,] 0.375 0.4375 0.1875
+[3,] 0.250 0.3750 0.3750
+
+
+P2 %^% 16
+          [,1] [,2]      [,3]
+[1,] 0.4000051  0.4 0.1999949
+[2,] 0.4000000  0.4 0.2000000
+[3,] 0.3999898  0.4 0.2000102
+
+
+	LOG16: Now, is P a regular Markov chain? And does it take 46 steps of the transition matrix P to reach
+		p^T =[.0909, .0455, .0682, .2500, .1591, .2045, .1818]?
+
+
+P %^% 45
+           [,1]       [,2]       [,3]      [,4]      [,5]      [,6]      [,7]
+[1,] 0.09090914 0.04545452 0.06818180 0.2500001 0.1590909 0.2045454 0.1818181
+[2,] 0.09090910 0.04545456 0.06818181 0.2499999 0.1590910 0.2045455 0.1818181
+[3,] 0.09090905 0.04545457 0.06818184 0.2499999 0.1590909 0.2045455 0.1818182
+[4,] 0.09090908 0.04545453 0.06818182 0.2500001 0.1590909 0.2045454 0.1818182
+[5,] 0.09090914 0.04545452 0.06818180 0.2500001 0.1590909 0.2045454 0.1818181
+[6,] 0.09090910 0.04545456 0.06818181 0.2499999 0.1590910 0.2045455 0.1818181
+[7,] 0.09090905 0.04545457 0.06818184 0.2499999 0.1590909 0.2045455 0.1818182
+
+
+
+P %^% 46
+          [,1]       [,2]       [,3]      [,4]      [,5]      [,6]      [,7]
+[1,] 0.09090907 0.04545457 0.06818183 0.2499999 0.1590909 0.2045455 0.1818182
+[2,] 0.09090906 0.04545455 0.06818183 0.2500000 0.1590909 0.2045454 0.1818182
+[3,] 0.09090911 0.04545452 0.06818181 0.2500001 0.1590909 0.2045454 0.1818182
+[4,] 0.09090912 0.04545454 0.06818180 0.2500000 0.1590909 0.2045455 0.1818181
+[5,] 0.09090907 0.04545457 0.06818183 0.2499999 0.1590909 0.2045455 0.1818182
+[6,] 0.09090906 0.04545455 0.06818183 0.2500000 0.1590909 0.2045454 0.1818182
+[7,] 0.09090911 0.04545452 0.06818181 0.2500001 0.1590909 0.2045454 0.1818182
+
+	LOG17: Success!!
+
+
+------------ Results --------------------------------------------------------------------------------------------------------------
+
+Find the unique prob vector, p^T of a regular Markov chain such that:
+
+	p^T%*%P = p^T					#the equilibrium limit (convergence) of the chain
+
+
+1. Use recursive step method beginning at some initial state:
+
+stps<-matrix(rep(0,7), ncol=1)				#empty matrix
+stps[1,1]<-1						#initial value ==> S1 at stp1
+							#recursive soln; stops when successive prob vectors are equal (to 4 decimal places)
+							#w/ P defined above, stops at [,33]
+for (ii in 2:100){								
+	stps<-cbind(stps,t(stps[,ii-1]%*%P))	
+	if(identical(round(stps[,ii], digits=4), round(stps[,ii-1], digits=4))) {		
+		break
+	}
+
+} 
+
+
+2. Confirm with P %^% k where k is matrix exponent that gives p^T in every row of P
+library ("expm")
+P %^% 33
+          [,1]       [,2]       [,3]      [,4]      [,5]      [,6]      [,7]
+[1,] 0.09090615 0.04545627 0.06818324 0.2499962 0.1590900 0.2045475 0.1818206
+[2,] 0.09090853 0.04545336 0.06818208 0.2500038 0.1590877 0.2045428 0.1818217
+[3,] 0.09091205 0.04545279 0.06818035 0.2500038 0.1590918 0.2045434 0.1818158
+[4,] 0.09090969 0.04545573 0.06818154 0.2499962 0.1590941 0.2045481 0.1818146
+[5,] 0.09090615 0.04545631 0.06818330 0.2499962 0.1590900 0.2045475 0.1818205
+[6,] 0.09090850 0.04545338 0.06818212 0.2500038 0.1590877 0.2045428 0.1818217
+[7,] 0.09091201 0.04545277 0.06818034 0.2500038 0.1590918 0.2045434 0.1818158
+
+
+
