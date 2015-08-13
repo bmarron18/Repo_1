@@ -188,7 +188,7 @@ Age-only Succession  Succession with age cohorts
 ==== STEP 10. run LANDIS =======================================
 		#return to the Linux command line
 		#open Wine and go to C:\Program Files
-		#run LANDIS using the program, 'Landis.Console-6.0.exe' and a scenario file
+		#run LANDIS using the program, 'Landis.Console-6.0.exe' plus 'scenario.txt'
 		#from C:\Program Files\LANDIS-II\v6\bin 
 
 C:\Program Files\LANDIS-II\v6\bin>Landis.Console-6.0.exe scenario.txt
