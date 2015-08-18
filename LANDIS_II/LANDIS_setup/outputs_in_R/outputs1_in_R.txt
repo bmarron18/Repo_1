@@ -1,0 +1,70 @@
+
+######################
+raster *.img files in R
+####################
+
+test<-paste("/home/bmarron/Desktop/AllSppMaxAge100.img", sep="")
+test
+[1] "/home/bmarron/Desktop/AllSppMaxAge100.img"
+
+file.exists(test)
+[1] TRUE
+
+raster.test<- raster(test)
+Error: file.exists(filename) is not TRUE
+
+	#use this syntax [actually, no ==> only helped to solve problem of additional needed libraries]
+raster.test<-raster(system.file(test, package="raster")) 
+Error in .rasterObjectFromFile(x, band = band, objecttype = "RasterLayer",  : 
+  Cannot create RasterLayer object from this file; perhaps you need to install rgdal first
+
+
+	#installing rgdal bombs!!
+
+	#installed gdal ubuntu libraries using Synaptic
+libgdal1                                  
+libgdal1-dev
+libgdal1-java
+libgdal-dev
+libgdal1-1.10.1-grass
+libgdal1h
+
+
+
+	#better but rgdal install still bombs
+checking proj_api.h usability... no
+checking proj_api.h presence... no
+checking for proj_api.h... no
+configure: error: proj_api.h not found in standard or given locations.
+
+	#try this
+$ sudo apt-get install libproj-dev
+
+	#success!!
+installing to /home/bmarron/R/i686-pc-linux-gnu-library/3.2/rgdal/libs
+** R
+** data
+** inst
+** preparing package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded
+* DONE (rgdal)
+
+library(rgdal)
+rgdal: version: 1.0-4, (SVN revision 548)
+ Geospatial Data Abstraction Library extensions to R successfully loaded
+ Loaded GDAL runtime: GDAL 1.10.1, released 2013/08/26
+ Path to GDAL shared files: /usr/share/gdal/1.10
+ Loaded PROJ.4 runtime: Rel. 4.8.0, 6 March 2012, [PJ_VERSION: 480]
+ Path to PROJ.4 shared files: (autodetected)
+ Linking to sp version: 1.1-0 
+
+	#now raster-ize an output *.img file
+raster.test<- raster(test)
+
+	#wow!!
+plot(raster.test)
+	

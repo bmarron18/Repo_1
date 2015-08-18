@@ -1,0 +1,20 @@
+~$ find ~/.wine -mmin +0  -mmin -10 > ~/Desktop/changes
+
+
+
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/v6
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/v6/examples
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/v6/examples/output-cohort-stats
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/v6/bin/extensions
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/v6/docs
+
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/plug-ins
+
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/6.0
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/6.0/unins000.dat
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/6.0/examples
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/6.0/examples/cohort-stats
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/6.0/examples/cohort-stats/fire
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/6.0/examples/cohort-stats/spp-age-stats
+/home/bmarron/.wine/drive_c/Program Files/LANDIS-II/6.0/unins000.exe
+
