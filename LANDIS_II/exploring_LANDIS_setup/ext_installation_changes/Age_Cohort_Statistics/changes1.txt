@@ -1,5 +1,21 @@
-~$ find ~/.wine -mmin +0  -mmin -10 > ~/Desktop/changes
+title:		directories modified resulting from the installation of 
+		the extension, 'LANDIS-II Age Cohort Statistics v2.1'
+		(LANDIS-II, 32-bit)
 
+author:		bmarron
+date:		14 Aug 2015
+
+####################
+generating the list
+#####################
+
+	#this list obtained (post-installation) using the Linux command,
+~$ find ~/.wine -mmin +0  -mmin -10 > ~/Desktop/changes1.txt
+
+
+#########################
+modified directories
+#######################
 
 
 /home/bmarron/.wine/drive_c/Program Files/LANDIS-II/v6

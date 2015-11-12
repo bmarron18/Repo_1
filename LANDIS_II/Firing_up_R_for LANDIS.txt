@@ -1,0 +1,63 @@
+Title:			Firing up R for LANDIS
+Project:	
+Record:		
+Author:			bmarron
+Origin Date:		11 Nov 2015
+
+
+################################
+Quiick guide to LANDIS outputs
+in R
+##################################
+
+
+library(rgdal)
+library (raster)
+library (sp)
+
+===== .gis files =================
+
+	#grab file and "rasterize" it
+test<-paste("~/Desktop/MiscProjects_GitHub/LANDIS_II/LANDIS_experiments/AgeOnlySuccession//initial-communities.gis", sep="")
+initialCommunities <-raster(test)
+
+	#basic info on file
+initialCommunities
+dim(initialCommunities)
+plot(initialCommunities)
+zoom(initialCommunities)
+image(initialCommunities)
+image(initialCommunities, col=terrain.colors(6))
+hist(initialCommunities, col= "purple", maxpixels=9801)
+
+	#plot individual map codes (note data histogram so use .5 values)
+plot(initialCommunities, zlim=c(0,0))
+plot(initialCommunities, zlim=c(0.5,1.5))
+plot(initialCommunities, zlim=c(1.5,2.5))
+plot(initialCommunities, zlim=c(2.5,3.5))
+plot(initialCommunities, zlim=c(3.5,4.5))
+plot(initialCommunities, zlim=c(4.5,5.5))
+plot(initialCommunities, zlim=c(5.5,6.5))
+
+	#plot combinations of mapcodes
+image(initialCommunities, col=c("red", "blue", "green", "orange", "black", "purple"), zlim=c(0,6.5))
+image(initialCommunities, col=c("red", "blue"), zlim=c(0,1.5))
+image(initialCommunities, col=c("purple"), zlim=c(0,6.5))
+
+	#select a region to zoom in on
+image(initialCommunities, col=terrain.colors(6))
+mapsection1<-crop(initialCommunities, drawExtent())
+plot(mapsection1)
+
+
+	#extract cell data
+freq(initialCommunities)
+getValues(initialCommunities, row=1)
+getValuesBlock(initialCommunities, row=1, nrows=1, col=38, ncols=6)
+getValuesBlock(initialCommunities, row=1, nrows=5, col=38, ncols=6, format='matrix')
+xyFromCell(initialCommunities, getValuesBlock(initialCommunities, row=1, nrows=5, col=38, ncols=6))
+
+cellFromRowCol(initialCommunities, rownr=1, colnr=38:43)
+extract(initialCommunities,cellFromRowCol(initialCommunities, rownr=1, colnr=38:43))
+
+

@@ -1,0 +1,24 @@
+
+######################
+evaluation of LANDIS output data
+spp-age-stats
+####################
+
+==== LANDIS run (fr log) ==========================
+
+
+
+
+==== in R ========================== 
+library(raster)
+library(sp)
+library(rgdal)
+
+
+	
+==== raster-ize output *.img files ======================================
+test<-paste("home/bmarron/Desktop/spp-age-stats/SPP-RICH-0.img", sep="")
+spprich0 <-raster(test)
+test<-paste("home/bmarron/Desktop/spp-age-stats/SPP-RICH-10.img", sep="")
+spprich10 <-raster(test)
+

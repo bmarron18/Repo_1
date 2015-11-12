@@ -1,0 +1,26 @@
+title:		directories modified resulting from the installation of 
+		the extension, 'LANDIS-II PnET-Succession 1.0.1'
+		(LANDIS-II, 32-bit)
+
+author:		bmarron
+date:		11 Nov 2015
+
+
+
+
+
+./v6
+./v6/uninstall
+./v6/uninstall/unins000.dat
+./v6/uninstall/unins000.exe
+./v6/examples
+./v6/examples/Age-only Succession
+./v6/examples/PnET-Succession
+./v6/examples/PnET-Succession/biomass-Pnet-succession-example
+./v6/examples/PnET-Succession/OneCellSimulation
+./v6/bin/extensions
+./v6/bin/extensions/extensions.xml
+./v6/bin/extensions/Defaults
+./v6/ext-info
+./v6/docs
+./6.0/examples
