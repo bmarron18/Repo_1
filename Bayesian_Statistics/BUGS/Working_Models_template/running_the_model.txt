@@ -1,0 +1,58 @@
+#### prep in R ####
+
+	#load R packages
+library(BRugs)
+library(coda)
+
+	#set R working directory for BRugs
+getwd()
+[1] "/home/bmarron"
+oldwd<-getwd()	
+modelSetWD("/home/bmarron/Desktop/MiscProjects_GitHub/Bayesian_Statistics/BUGS/Working_Models")
+
+
+
+######### running the model ############
+THE IDEAL:
+tester1<-BRugsFit(
+     modelFile="model.txt",
+     data="data.txt",
+     ##inits="inits.txt",
+     parametersToSave=c( "Z1", "Z2", "D1", "D2", "D3", "D4", "P1", "P2", "P3", "P4", 
+			"Y.99.stat1.d", "Y.99.stat1.pred.d", "Pstat1.99", 
+			"Y.98.stat1.d", "Y.98.stat1.pred.d", "Pstat1.98",
+			"Y.99.pred", "Y.98.pred"),	
+     numChains=1,
+     nIter=20000)
+
+tester1
+
+
+
+
+THE IDEAL:
+tester1<-BRugsFit(
+     modelFile="model.txt",
+     data="data.txt",
+     ##inits="inits.txt",
+     parametersToSave=c( "Z1", "Z2"),	
+     numChains=1,
+     nIter=20000)
+
+tester1
+
+
+IF PROBLEMS:
+modelCheck("model.txt")
+modelData("data.txt")
+modelCompile(numChains=1)
+#modelInits("inits.txt")
+modelGenInits()
+set.seed(47)
+modelUpdate(10000)
+
+samplesSet(c("Z1", "Z2", "D1", "D2", "P1", "P2"))
+summarySet(c("Z1", "Z2", "D1", "D2", "P1", "P2"))
+modelUpdate(50000)
+
+summaryStats(c("Z1", "Z2", "D1", "D2", "P1", "P2"))

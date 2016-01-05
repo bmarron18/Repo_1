@@ -1,0 +1,126 @@
+Title: 		Example 2.6.1 BUGS
+Date: 		25 Dec 2015
+Author: 	bmarron
+
+
+#####################################
+	Problem statement
+#####################################
+
+
+
+######################################
+	Problem Structure:
+	Assumptions as limits of the investigation
+	Assumptions as definition of the system under investigation
+#######################################
+ 
+define assumptions:
+	--the scale of investigation and causation (environment, system, subsystem)
+	--the fluxes between environment and system; between system and subsystem
+	--the causal and logical links
+	--the process(es) under investigation
+	--the fundamental entities (populations) involved
+	--the observable (and measurable) attributes or outcomes of interest
+	--the 
+coupled to the attributes or outcomes of interest, and the primary statisitcs
+
+
+
+==== the scale of investigation and causation (systems perspective) ========================================
+
+environmental_sphere2:		--British healthcare system
+
+environmental_sphere1: 		--network of all British hospitals
+
+system:				--heart transplant unit	in a generic British hospital
+
+subsystem(s):			--heart transplant recipients
+				--heart transplant donors
+				--physicians
+				--nursing staff
+				--infrastructure and equipment
+
+
+==== the fluxes (matter, energy, information)/time  ===========================================================
+fluxes
+(env_spheres <---> system):	--none; system assumed isolated; snapshot analysis
+				--heart transplant unit assumed static w/ respect to the hospital
+
+fluxes
+(system <---> subsystem):	--physicians, nursing staff, infrastructure, equipment, practices (ie, info transfer) assumed static
+				w/in the heart transplant unit over the time of the analysis
+				--assumed pulsed flux of recipients (cases) from a well-defined (known) population that is
+				homogeneous w/ respect to many of the characteristics affecting success of heart transplant surgery;
+				the variability in the initial conditions of the cases is fixed and stationary; cases are representative 
+				of the population (but a pulsed flux is NOT a random sample!)      
+				--assumed pulsed flux of donors from a well-defined (known) population that is
+				homogeneous w/ respect to many of the characteristics affecting success of heart transplant surgery;
+				the variability in the initial conditions of the donors is fixed and stationary; donors are representative 
+				of the population (but a pulsed flux is NOT a random sample!)  
+
+
+######################################
+	Problem Structure:
+	The processes under investigation
+	The populations
+	The observables
+	The generating dist.s
+	The data sets
+#######################################
+
+
+==== investigated_process1: heart transplant surgery survival and life expectancy ===========================
+
+
+fundamental entities of interest (pop.s);
+observable (measurable) attributes;
+generating distributions;
+empirical data sets
+
+			--cases w/ heart disease who do not undergo heart transplant surgery
+			--life expectancy (years)
+			--Y.99 ~ dexp (0.5)
+			--no data
+
+			--cases w/ heart disease who do undergo the surgery
+			--surgery survival (binary) 
+			--Y.98a ~ dbern (0.8)
+			--no data
+
+			--cases w/ heart disease who do undergo the surgery
+			--life expectancy (years)
+			--Y.98b ~ dexp (0.2)
+			--no data
+
+
+			
+######################################
+	Problem Structure:
+	Logical translation
+#######################################
+
+==== the (in)dependencies in the relations of assumed causal and logical propositional links ==========================
+
+
+propositional_link1:	survival(s) <==> heart transplant surgery (hts) 
+				--causal; logically dependent
+				-- m dependent on hts
+				--P(s) = ∫d(hts) P(s|hts)P(hts)
+
+
+propositional_link2:	longevity (L) <==> survival(s) <==> heart transplant surgery (hts)
+				--causal; logically dependent
+				--longevity is dependent on heart transplant surgery thru surgery survival
+				--P(L AND s)) = P(L|s) P(s)
+
+
+
+
+
+
+
+
+
+
+
