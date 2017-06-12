@@ -2,7 +2,7 @@ Title: DynSystems_Project2_1 --- SYSC 505 Wakeland
 Date: 12/13/14
 Author: Marron
 
-edit check
+edit check2
 
 GOAL: Duplicate results from Example 2 (Simplified Monopoly) p. 232 Luenberger
 	LOG1: seven state Markov chain w/ transition matrix p233
